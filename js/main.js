@@ -1,13 +1,13 @@
 //Banner tự động chạy
-function initCarousel() {
-  const carouselElement = document.querySelector("#carouselExampleAutoplay");
-  if (carouselElement) {
-    new bootstrap.Carousel(carouselElement, {
-      interval: 3000,
-      ride: "carousel",
-    });
-  }
-}
+// function initCarousel() {
+//   const carouselElement = document.querySelector("#carouselExampleAutoplay");
+//   if (carouselElement) {
+//     new bootstrap.Carousel(carouselElement, {
+//       interval: 3000,
+//       ride: "carousel",
+//     });
+//   }
+// }
 
 // Hiện thông báo chào mừng lần đầu truy cập
 function showWelcomeAlert() {
@@ -310,13 +310,65 @@ function renderProductDetail() {
     };
   }
 }
+// ===============================
+// API CONFIG
+// ===============================
+const API_URL = "http://127.0.0.1:8000/api";
+// Đổi nếu backend host khác
+
+// ===============================
+// XỬ LÝ ĐĂNG NHẬP
+// ===============================
+function initLogin() {
+  const form = document.getElementById("loginForm");
+  if (!form) return; // Nếu không phải trang login thì bỏ qua
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Sai email hoặc mật khẩu!");
+        return;
+      }
+
+      // Lưu token
+      localStorage.setItem("token", data.token);
+
+      alert("Đăng nhập thành công!");
+
+      // Chuyển hướng
+      window.location.href = "index.php";
+    } catch (error) {
+      console.error("FETCH ERROR:", error);
+      alert("Không thể kết nối tới server!");
+    }
+  });
+}
 
 //Hàm load các func vừa tạo ở trên
 document.addEventListener("DOMContentLoaded", function () {
   renderProductDetail();
-  initCarousel();
+  // initCarousel();
   showWelcomeAlert();
   handleHamburgerMenu();
   initScrollToTopBtn();
   focusSearchInput();
+  initLogin();
 });

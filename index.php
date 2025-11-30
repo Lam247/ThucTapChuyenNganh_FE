@@ -50,30 +50,28 @@
           </div>
         </div>
       </div>
-      <div id="carouselExampleAutoplay" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="img/banner/action-cam.jpg" class="d-block w-100" alt="Image 1">
-          </div>
-          <div class="carousel-item">
-            <img src="img/banner/t5-2024-flycam.png" class="d-block w-100" alt="Image 2">
-          </div>
-          <div class="carousel-item">
-            <img src="img/banner/t5-2024-thu-cu-doi-moi.png" class="d-block w-100" alt="Image 3">
-          </div>
-          <div class="carousel-item">
-            <img src="img/banner/banner-web-desktop-oa5pro.jpg" class="d-block w-100" alt="Image 4">
-          </div>
+      <div id="carouselExampleAutoplay" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="img/banner/action-cam.jpg" class="d-block w-100" alt="Image 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="img/banner/t5-2024-flycam.png" class="d-block w-100" alt="Image 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="img/banner/t5-2024-thu-cu-doi-moi.png" class="d-block w-100" alt="Image 3">
+                </div>
+                <div class="carousel-item">
+                    <img src="img/banner/banner-web-desktop-oa5pro.jpg" class="d-block w-100" alt="Image 4">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplay" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplay" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleAutoplay" role="button" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleAutoplay" role="button" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </a>
-      </div>
       <div id="main">
         <div class="headline">
           <div class="line"></div>

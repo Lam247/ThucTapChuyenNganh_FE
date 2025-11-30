@@ -58,7 +58,7 @@
       </div>
       <section class="login-section">
         <h2 class="login-title">ĐĂNG NHẬP</h2>
-        <form class="login-form" action="#" method="POST">
+        <form class="login-form" id="loginForm" action="#" method="POST">
           <div class="form-row">
             <label for="email">Email</label>
             <input
