@@ -1,13 +1,40 @@
 //Banner tự động chạy
-// function initCarousel() {
-//   const carouselElement = document.querySelector("#carouselExampleAutoplay");
-//   if (carouselElement) {
-//     new bootstrap.Carousel(carouselElement, {
-//       interval: 3000,
-//       ride: "carousel",
-//     });
-//   }
-// }
+document.addEventListener("DOMContentLoaded", function () {
+  var swiper = new Swiper("#mainBanner", {
+    // 1. Hiệu ứng chuyển cảnh
+    effect: "slide", // Hoặc đổi thành 'fade', 'cube', 'coverflow' nếu thích
+    speed: 800, // Tốc độ trượt (ms) - chỉnh số này để nhanh/chậm
+
+    // 2. Vòng lặp vô tận
+    loop: true,
+
+    // 3. Tự động chạy
+    autoplay: {
+      delay: 2000,
+      disableOnInteraction: false, // Vẫn tự chạy lại sau khi người dùng kéo
+      pauseOnMouseEnter: true, // Di chuột vào thì dừng
+    },
+
+    // 4. Cho phép kéo thả chuột (QUAN TRỌNG)
+    grabCursor: true, // Hiện hình bàn tay khi di chuột vào
+
+    // 5. Nút điều hướng
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+
+    // 6. Dấu chấm phân trang
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+      dynamicBullets: true, // Hiệu ứng chấm to nhỏ
+    },
+
+    // 7. Tối ưu hiệu năng
+    lazy: true,
+  });
+});
 
 // Hiện thông báo chào mừng lần đầu truy cập
 function showWelcomeAlert() {
@@ -315,13 +342,12 @@ function renderProductDetail() {
 // ===============================
 const API_URL = "http://127.0.0.1:8000/api";
 // Đổi nếu backend host khác
-
 // ===============================
-// XỬ LÝ ĐĂNG NHẬP
+// XỬ LÝ ĐĂNG NHẬP (VERIFIED WITH DB)
 // ===============================
 function initLogin() {
   const form = document.getElementById("loginForm");
-  if (!form) return; // Nếu không phải trang login thì bỏ qua
+  if (!form) return;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -330,10 +356,12 @@ function initLogin() {
     const password = document.getElementById("password").value;
 
     try {
+      // 1. Gọi API đăng nhập
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({
           email: email,
@@ -348,16 +376,25 @@ function initLogin() {
         return;
       }
 
-      // Lưu token
+      // 2. Lưu Token & Info vào LocalStorage
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user_info", JSON.stringify(data.user));
 
       alert("Đăng nhập thành công!");
 
-      // Chuyển hướng
-      window.location.href = "index.php";
+      // 3. --- KIỂM TRA QUYỀN (Theo Database camera_db) ---
+      // Database của bạn cột role có 2 giá trị: 'customer' và 'admin'
+
+      if (data.user && data.user.role === "admin") {
+        console.log("Quyền Admin xác nhận -> Vào trang Admin");
+        window.location.href = "admin.php"; // Chuyển sang trang quản trị
+      } else {
+        console.log("Khách hàng -> Về trang chủ");
+        window.location.href = "index.php"; // Chuyển về trang bán hàng
+      }
     } catch (error) {
       console.error("FETCH ERROR:", error);
-      alert("Không thể kết nối tới server!");
+      alert("Lỗi kết nối tới Server!");
     }
   });
 }
@@ -365,7 +402,6 @@ function initLogin() {
 //Hàm load các func vừa tạo ở trên
 document.addEventListener("DOMContentLoaded", function () {
   renderProductDetail();
-  // initCarousel();
   showWelcomeAlert();
   handleHamburgerMenu();
   initScrollToTopBtn();

@@ -93,6 +93,51 @@ body {
   font-size: 14px;
 }
 
+#mainBanner {
+  margin-top: 150px;
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+#mainBanner .swiper-slide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  background: none !important;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  color: #fff !important;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 22px !important;
+  font-weight: bold;
+}
+
+#mainBanner:hover .swiper-button-next,
+#mainBanner:hover .swiper-button-prev {
+  opacity: 0.6;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  opacity: 1 !important;
+  transform: scale(1.1);
+}
+
 .promo-box {
   background-color: #ec4d0f;
   color: #ffffff;

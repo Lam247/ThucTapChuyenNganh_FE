@@ -111,7 +111,7 @@
 
       <div class="footer-bottom">
         <p>
-          Họ và tên: Trần Kiêm Lâm | MSSV: DH52200971 | Lớp: D222-TH05 | Nhóm 12
+          Họ và tên: Trần Kiêm Lâm | MSSV: DH52200971 | Lớp: D22-TH05 | Nhóm 12
           - Thứ 3 ca 4
         </p>
       </div>
