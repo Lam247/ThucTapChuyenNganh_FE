@@ -1,3 +1,5 @@
+let products = []; // GLOBAL LIST
+
 //Banner tự động chạy
 function initCarousel() {
   const carouselElement = document.querySelector("#carouselExampleAutoplay");
@@ -84,193 +86,6 @@ function focusSearchInput() {
   }
 }
 
-//Danh sách sản phẩm
-const products = [
-  {
-    id: "1",
-    name: "Canon 5D Mark 4",
-    price: "24,810,000đ",
-    oldPrice: "25,110,000đ",
-    img: "./img/Camera/Canon/DSLR/Canon-5D-Mark-IV-Body-247x296.jpg",
-    desc: "Canon 5D Mark IV là dòng máy ảnh DSLR chuyên nghiệp với cảm biến full-frame...",
-  },
-  {
-    id: "2",
-    name: "Canon 77D + 18-55mm",
-    price: "10,000,000đ",
-    oldPrice: "",
-    img: "./img/Camera/Canon/DSLR/Canon-77D-18-55mm-STM-247x296.jpg",
-    desc: "Máy ảnh Canon 77D kèm ống kính 18-55mm, nhỏ gọn, dễ sử dụng.",
-  },
-  {
-    id: "3",
-    name: "Canon EOS R1",
-    price: "10,200,000đ",
-    oldPrice: "10,990,000đ",
-    img: "./img/Camera/Canon/Microless/Canon-EOS-R1-1-247x296.jpg",
-    desc: "Canon EOS R1, máy ảnh mirrorless cao cấp, quay phim sắc nét.",
-  },
-  {
-    id: "4",
-    name: "Canon M200",
-    price: "7,000,000đ",
-    oldPrice: "7,490,000đ",
-    img: "./img/Camera/Canon/Microless/Canon-EOS-M200-8-247x296.jpg",
-    desc: "Canon M200, máy ảnh nhỏ gọn, phù hợp du lịch và chụp ảnh hàng ngày.",
-  },
-  {
-    id: "5",
-    name: "FujiFilm XH2",
-    price: "25,000,000đ",
-    oldPrice: "29,000,000đ",
-    img: "./img/Camera/Fujifilm/FUJIFILM-X-H2-1-247x296.jpg",
-    desc: "Fujifilm XH2, cảm biến lớn, chất lượng ảnh vượt trội.",
-  },
-  {
-    id: "6",
-    name: "Nikon Z5 II",
-    price: "20,000,000đ",
-    oldPrice: "25,000,000đ",
-    img: "./img/Camera/Nikon/Nikon-Z5-II-5-247x296.jpg",
-    desc: "Nikon Z5 II, máy ảnh mirrorless, hiệu năng ổn định, giá tốt.",
-  },
-  {
-    id: "7",
-    name: "Sony A7C II",
-    price: "9,000,000đ",
-    oldPrice: "10,000,000đ",
-    img: "./img/Camera/Sony/Sony-A7C-II-9-1-247x296.jpg",
-    desc: "Sony A7C II, nhỏ gọn, quay phim 4K, lấy nét nhanh.",
-  },
-  {
-    id: "8",
-    name: "Sony A9III",
-    price: "99,000,000đ",
-    oldPrice: "100,000,000đ",
-    img: "./img/Camera/Sony/Sony-A9-III-247x296.jpg",
-    desc: "Sony A9III, flagship tốc độ cao, dành cho nhiếp ảnh chuyên nghiệp.",
-  },
-  {
-    id: "9",
-    name: "DJI Avata2",
-    price: "9,800,000đ",
-    oldPrice: "10,000,000đ",
-    img: "./img/Flycam/DJI-Avata-2-Flying-Kit-Phien-ban-pin-don-247x296.jpg",
-    desc: "Flycam DJI Avata2 nhỏ gọn, quay video mượt mà, dễ điều khiển.",
-  },
-  {
-    id: "10",
-    name: "DJI Mini 4",
-    price: "15,000,000đ",
-    oldPrice: "",
-    img: "./img/Flycam/dji-mini-4-pro-fly-more-combo-plus-247x296.jpg",
-    desc: "Flycam DJI Mini 4, siêu nhẹ, quay phim 4K, pin lâu.",
-  },
-  {
-    id: "11",
-    name: "DJI Neo 8",
-    price: "20,000,000đ",
-    oldPrice: "",
-    img: "./img/Flycam/DJI-Neo-8-247x296.jpg",
-    desc: "DJI Neo 8, flycam mạnh mẽ, ổn định, phù hợp quay ngoài trời.",
-  },
-  {
-    id: "12",
-    name: "DJI Neo Fly Combo",
-    price: "25,000,000đ",
-    oldPrice: "",
-    img: "./img/Flycam/DJI-Neo-Fly-More-Combo-3-247x296.jpg",
-    desc: "Combo flycam DJI Neo, đầy đủ phụ kiện, bay lâu hơn.",
-  },
-  {
-    id: "13",
-    name: "DJI Bag",
-    price: "1,000,000đ",
-    oldPrice: "",
-    img: "./img/Flycam/dji-shoulder-bag-cho-mini-3-1-247x296.jpg",
-    desc: "Túi đựng DJI chính hãng, bảo vệ flycam an toàn.",
-  },
-  {
-    id: "14",
-    name: "FPV Combo",
-    price: "20,000,000đ",
-    oldPrice: "25,000,000đ",
-    img: "./img/Flycam/FPV-Combo-247x296.jpg",
-    desc: "Bộ FPV Combo, trải nghiệm bay tốc độ cao, hình ảnh sắc nét.",
-  },
-  {
-    id: "15",
-    name: "Tay Cầm DJI",
-    price: "15,000,000đ",
-    oldPrice: "",
-    img: "./img/Flycam/Insta360-Titan-Chinh-hang-247x296.jpg",
-    desc: "Tay cầm DJI, điều khiển dễ dàng, chắc chắn.",
-  },
-  {
-    id: "16",
-    name: "Mavic 3",
-    price: "100,000,000đ",
-    oldPrice: "",
-    img: "./img/Flycam/mavic-3-cine-tokyocamera-1-247x296.jpg",
-    desc: "Flycam Mavic 3, quay phim chuyên nghiệp, pin cực lâu.",
-  },
-  {
-    id: "17",
-    name: "Insta360 X5 (Essentials Bundle)",
-    price: "16,800,000đ",
-    oldPrice: "",
-    img: "./img/Action-360 Camera/Insta360-X5-Essentials-Bundle-2-1-247x296.jpg",
-    desc: "Bộ camera Insta360 X5 Essentials Bundle, quay 360 độ, nhỏ gọn, tiện dụng.",
-  },
-  {
-    id: "18",
-    name: "Sony ZV-E10 + Lens 16-55mm F3.5-5.6",
-    price: "17,490,000đ",
-    oldPrice: "18,990,000đ",
-    img: "./img/Camera/Sony/Sony-ZV-E10-II-Lens-16-50mm-1-247x296.jpg",
-    desc: "Sony ZV-E10 kèm lens 16-55mm, quay vlog, chụp ảnh chất lượng cao.",
-  },
-  {
-    id: "19",
-    name: "Sony a6700 Mirrorless Camera (Body Only)",
-    price: "34,490,000đ",
-    oldPrice: "35,490,000đ",
-    img: "./img/Camera/Sony/Sony-a6700-247x296.jpg",
-    desc: "Sony a6700, máy ảnh mirrorless, cảm biến APS-C, quay phim 4K.",
-  },
-  {
-    id: "20",
-    name: "Insta360 X5",
-    price: "10,590,000đ",
-    oldPrice: "",
-    img: "./img/Action-360 Camera/Insta360-X5-7-1-247x296.jpg",
-    desc: "Insta360 X5, camera hành trình 360 độ, nhỏ gọn, dễ sử dụng.",
-  },
-  {
-    id: "21",
-    name: "DJI Mini3 Propeller",
-    price: "200,000đ",
-    oldPrice: "",
-    img: "./img/accessory/DJI-Mini-3-Propellers-247x296.jpg",
-    desc: "Cánh quạt thay thế cho DJI Mini3, bền, nhẹ, dễ lắp đặt.",
-  },
-  {
-    id: "22",
-    name: "DJI RSMini 5",
-    price: "7,000,000đ",
-    oldPrice: "7,499,000đ",
-    img: "./img/Gimbal/dji-rs-4-mini-5-247x296.jpg",
-    desc: "Gimbal DJI RS Mini 5, chống rung mượt mà, nhỏ gọn.",
-  },
-  {
-    id: "23",
-    name: "Hub Sạc DJI Neo 1",
-    price: "980,000đ",
-    oldPrice: "1,250,000đ",
-    img: "./img/accessory/Hub-Sac-Pin-Hai-Chieu-DJI-Neo-1-247x296.jpg",
-    desc: "Hub sạc pin hai chiều cho DJI Neo 1, sạc nhanh, an toàn.",
-  },
-];
 
 //Thêm sản phẩm vào giỏ hàng
 function addToCart(productId) {
@@ -311,6 +126,136 @@ function renderProductDetail() {
   }
 }
 
+// ===============================
+// API CONFIG & LOGIC HIỂN THỊ (FIXED CHO PRODUCT CONTROLLER)
+// ===============================
+const IMAGE_BASE_URL = "http://127.0.0.1:8000/"; 
+
+// 1. Hàm format tiền tệ
+const formatCurrency = (amount) => {
+    if (!amount) return '0đ';
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
+
+// 2. Hàm lấy ảnh đại diện chính xác từ quan hệ 'images'
+const getProductImage = (product) => {
+    // Controller trả về quan hệ tên là 'images' (trong hàm show: with('images'))
+    if (product.images && product.images.length > 0) {
+        // Tìm ảnh có is_primary = 1
+        let primaryImage = product.images.find(img => img.is_primary == 1);
+        
+        // Nếu không có ảnh chính, lấy ảnh đầu tiên
+        if (!primaryImage) primaryImage = product.images[0];
+        
+        let url = primaryImage.image_url;
+        
+        // Xử lý đường dẫn
+        if (url && !url.startsWith('http')) {
+            if (url.startsWith('/')) url = url.substring(1);
+            return IMAGE_BASE_URL + url;
+        }
+        return url;
+    }
+    return './img/no-image.jpg';
+};
+
+// 3. Hàm tạo HTML
+const createProductHTML = (product) => {
+    const imageUrl = getProductImage(product);
+    
+    // Logic giá: Database có 'price' và 'compare_price'
+    const price = parseFloat(product.price);
+    const comparePrice = product.compare_price ? parseFloat(product.compare_price) : 0;
+    const hasDiscount = comparePrice > price;
+
+    return `
+        <li>
+            <div class="product-items">
+                <div class="product-top">
+                    <a href="product-detail.php?id=${product.id}" class="product-thumb">
+                        <img src="${imageUrl}" alt="${product.name}" onerror="this.src='./img/no-image.jpg'">
+                    </a>
+                    <a href="javascript:void(0)" onclick="addToCart(${product.id})" class="buy-now">Mua Ngay</a>
+                </div>
+                <div class="product-info">
+                    <a href="product-detail.php?id=${product.id}" class="product-name">${product.name}</a>
+                    ${
+                        hasDiscount
+                        ? `<div class="product-discount-price">${formatCurrency(comparePrice)}</div>
+                           <div class="product-price">${formatCurrency(price)}</div>`
+                        : `<div class="product-price">${formatCurrency(price)}</div>`
+                    }
+                </div>
+            </div>
+        </li>
+    `;
+};
+
+// 4. Hàm gọi API (Đã sửa để đọc cấu trúc Phân Trang)
+async function fetchAndRenderProducts() {
+    if (!document.getElementById('list-canon')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+        
+        const jsonData = await response.json();
+        
+        // --- QUAN TRỌNG: XỬ LÝ DỮ LIỆU PHÂN TRANG ---
+        // Controller trả về: { message: "...", data: { data: [sản phẩm...], current_page: 1... } }
+        // Nên danh sách sản phẩm nằm ở: jsonData.data.data
+        
+        
+        if (jsonData.data && jsonData.data.data && Array.isArray(jsonData.data.data)) {
+          products = jsonData.data.data; // lưu vào biến global
+             // Lấy mảng sản phẩm từ bên trong object phân trang
+        } else if (jsonData.data && Array.isArray(jsonData.data)) {
+            products = jsonData.data; // Trường hợp dự phòng nếu sau này bỏ phân trang
+        } else {
+            console.warn("Cấu trúc dữ liệu lạ:", jsonData);
+        }
+
+        // Ẩn loading
+        document.querySelectorAll('.loading-text').forEach(el => el.style.display = 'none');
+
+        const listCanon = document.getElementById('list-canon');
+        const listFlycam = document.getElementById('list-flycam');
+        const listGimbal = document.getElementById('list-gimbal');
+        const listAction = document.getElementById('list-action');
+        const listAccessory = document.getElementById('list-accessory');
+
+        products.forEach(product => {
+            const html = createProductHTML(product);
+            
+            // Logic phân loại
+            const brandName = product.brand ? product.brand.name.toLowerCase() : '';
+            const categoryName = product.category ? product.category.name.toLowerCase() : '';
+            const productName = product.name.toLowerCase();
+
+            if (brandName.includes('canon') || brandName.includes('sony') || brandName.includes('nikon') || categoryName.includes('máy ảnh')) {
+                if(listCanon) listCanon.innerHTML += html;
+            }
+            else if (productName.includes('dji') || productName.includes('flycam') || productName.includes('mavic')) {
+                if(listFlycam) listFlycam.innerHTML += html;
+            }
+            else if (productName.includes('gimbal') || productName.includes('rs')) {
+                if(listGimbal) listGimbal.innerHTML += html;
+            }
+            else if (productName.includes('gopro') || productName.includes('insta360') || productName.includes('action')) {
+                if(listAction) listAction.innerHTML += html;
+            }
+            else {
+                if(listAccessory) listAccessory.innerHTML += html;
+            }
+        });
+
+    } catch (error) {
+        console.error('Lỗi JS:', error);
+        const listCanon = document.getElementById('list-canon');
+        if(listCanon) listCanon.innerHTML = `<p style="color:red; text-align:center">Lỗi: ${error.message}. Kiểm tra Server (php artisan serve) hoặc F12 xem lỗi CORS.</p>`;
+    }
+}
+
 //Hàm load các func vừa tạo ở trên
 document.addEventListener("DOMContentLoaded", function () {
   renderProductDetail();
@@ -319,4 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
   handleHamburgerMenu();
   initScrollToTopBtn();
   focusSearchInput();
+  initLogin();
+
+  fetchAndRenderProducts();
 });
