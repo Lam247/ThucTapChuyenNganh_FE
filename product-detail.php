@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./styles/style.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./js/main.js" defer></script>
     <title>Chi tiết sản phẩm | KL Camera Shop</title>
+    
     <style>
       .product-detail-section {
         margin-top: 180px;
@@ -21,11 +23,19 @@
           margin-top: 110px;
         }
       }
+      /* Thêm style cho mô tả để hiển thị HTML từ DB đẹp hơn */
+      .product-detail-desc {
+        line-height: 1.6;
+        color: #333;
+      }
+      .product-detail-desc img {
+        max-width: 100%;
+        height: auto;
+      }
     </style>
   </head>
   <body>
     <div id="wrapper">
-      <!-- Top bar -->
       <div id="top-bar">
         <div class="top-left">
           <form class="search-bar" action="#" method="get">
@@ -50,12 +60,11 @@
           </div>
         </div>
       </div>
-      <!-- Header -->
       <div id="header">
         <a href="index.php" class="logo">
           <img src="./img/Logo.png" alt="Logo" />
         </a>
-        <div id="hamburger">&#9776;</div>
+        <div id="hamburger">☰</div>
         <div id="menu">
           <div class="item">
             <ul>
@@ -75,15 +84,23 @@
           onclick="window.history.back()"
           class="btn btn-outline-dark mb-3"
         >
-          &larr; Quay lại
+          ← Quay lại
         </button>
-        <div class="row align-items-center">
+        
+        <div id="loading-spinner" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Đang tải thông tin sản phẩm...</p>
+        </div>
+
+        <div class="row align-items-start" id="product-content" style="display: none;">
           <div class="col-md-5 text-center">
             <img
-              src="./img/Camera/Canon/DSLR/Canon-5D-Mark-IV-Body-247x296.jpg"
-              alt="Canon 5D Mark 4"
+              src="" 
+              alt=""
               class="img-fluid rounded shadow product-detail-img"
-              style="max-width: 350px"
+              style="max-width: 100%; object-fit: contain;"
             />
           </div>
           <div class="col-md-7">
@@ -91,32 +108,37 @@
               class="mb-3 product-detail-title"
               style="font-size: 2rem; font-weight: 700"
             >
-              Canon 5D Mark 4
-            </h1>
+              </h1>
             <div class="mb-2">
               <span
                 class="text-muted text-decoration-line-through product-detail-price-old"
                 style="font-size: 1.2rem"
-                >25,110,000đ</span
-              >
+                ></span>
               <span
                 class="ms-3 product-detail-price-new"
                 style="color: #ff430a; font-size: 1.5rem; font-weight: 700"
-                >24,810,000đ</span
-              >
+                ></span>
             </div>
-            <p class="mb-4 product-detail-desc" style="font-size: 1.1rem">
-              Canon 5D Mark IV là dòng máy ảnh DSLR chuyên nghiệp với cảm biến
-              full-frame, khả năng quay phim 4K, lấy nét nhanh và chính xác, phù
-              hợp cho cả nhiếp ảnh gia và quay phim chuyên nghiệp.
-            </p>
+            
+            <div class="mb-4">
+                <h5>Mô tả chi tiết:</h5>
+                <div class="product-detail-desc" style="font-size: 1.1rem">
+                  </div>
+            </div>
+
             <button
+<<<<<<< HEAD
               id="btnBuyNow"
               class="btn btn-primary btn-lg fw-bold shadow-sm"
               style="background: #ff430a; border: none; padding: 12px 30px;"
+=======
+              class="btn btn-primary btn-lg btn-buy-now"
+              style="background: #ff430a; border: none"
+>>>>>>> e2ec22e5c6fa97cdd5fa58b9edefb9f20934c336
             >
               <i class="fa-solid fa-bolt"></i> Mua ngay
             </button>
+<<<<<<< HEAD
 
             <button 
               id="btnAddToCart" 
@@ -124,10 +146,19 @@
               style="padding: 12px 30px;"
             >
               <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+=======
+            <button class="btn btn-outline-secondary btn-lg ms-2 btn-add-cart">
+              Thêm vào giỏ
+>>>>>>> e2ec22e5c6fa97cdd5fa58b9edefb9f20934c336
             </button>
           </div>
         </div>
+        
+        <div id="error-message" class="alert alert-danger text-center my-5" style="display: none;">
+            Không tìm thấy sản phẩm hoặc có lỗi xảy ra.
+        </div>
       </div>
+
       <footer class="footer">
         <div class="footer-main">
           <div class="footer-left">
@@ -163,5 +194,87 @@
         </div>
       </footer>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get("id");
+        
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const productContent = document.getElementById('product-content');
+        const errorMsg = document.getElementById('error-message');
+
+        if (!productId) {
+            showError("Thiếu ID sản phẩm trên URL.");
+            return;
+        }
+
+        // URL API: Đảm bảo route trong Laravel là /products/{id}
+        const API_URL = `http://127.0.0.1:8000/api/products/${productId}`;
+
+        fetch(API_URL)
+          .then(response => {
+            if (!response.ok) throw new Error(`Lỗi server: ${response.status}`);
+            return response.json();
+          })
+          .then(jsonResponse => {
+            // Dựa vào cấu trúc return response()->json(['data' => $product]) của Laravel
+            const product = jsonResponse.data; 
+
+            if (!product) {
+                showError("Không tìm thấy dữ liệu sản phẩm.");
+                return;
+            }
+
+            // 1. Tên
+            document.querySelector(".product-detail-title").textContent = product.name;
+
+            // 2. Giá
+            const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price);
+            document.querySelector(".product-detail-price-new").textContent = price;
+
+            // 3. Giá cũ (Nếu có)
+            if (product.compare_price > product.price) {
+                const oldPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.compare_price);
+                document.querySelector(".product-detail-price-old").textContent = oldPrice;
+            }
+
+            // 4. Mô tả
+            const desc = product.description || product.short_description || "Đang cập nhật mô tả...";
+            document.querySelector(".product-detail-desc").innerHTML = desc;
+
+            // 5. Ảnh
+            const imgEl = document.querySelector(".product-detail-img");
+            let finalImg = './img/no-image.png';
+            
+            if (product.images && product.images.length > 0) {
+                // Ưu tiên ảnh primary hoặc ảnh đầu tiên
+                let imgObj = product.images.find(img => img.is_primary == 1) || product.images[0];
+                let path = imgObj.image_url || imgObj.url;
+                if(path) finalImg = path.startsWith('http') ? path : path;
+            } else if (product.image) {
+                finalImg = product.image;
+            }
+            
+            imgEl.src = finalImg;
+            imgEl.onerror = function() { this.src = 'https://placehold.co/400?text=No+Image'; };
+
+            // Hiện nội dung
+            loadingSpinner.style.display = 'none';
+            productContent.style.display = 'flex';
+          })
+          .catch(err => {
+            console.error(err);
+            showError("Lỗi kết nối: " + err.message);
+          });
+
+        function showError(msg) {
+            loadingSpinner.style.display = 'none';
+            productContent.style.display = 'none';
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = msg;
+        }
+      });
+    </script>
   </body>
 </html>
