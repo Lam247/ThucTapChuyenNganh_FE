@@ -1,52 +1,65 @@
-//Banner tự động chạy
+// ===============================
+// 1. CẤU HÌNH & TIỆN ÍCH CHUNG
+// ===============================
+const API_URL = "http://127.0.0.1:8000/api";
+
+// Cấu hình Toast (Thông báo nhỏ góc phải)
+const Toast =
+  typeof Swal !== "undefined"
+    ? Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      })
+    : null;
+
+// Banner Swiper
 document.addEventListener("DOMContentLoaded", function () {
-  var swiper = new Swiper("#mainBanner", {
-    // 1. Hiệu ứng chuyển cảnh
-    effect: "slide", // Hoặc đổi thành 'fade', 'cube', 'coverflow' nếu thích
-    speed: 800, // Tốc độ trượt (ms) - chỉnh số này để nhanh/chậm
-
-    // 2. Vòng lặp vô tận
-    loop: true,
-
-    // 3. Tự động chạy
-    autoplay: {
-      delay: 2000,
-      disableOnInteraction: false, // Vẫn tự chạy lại sau khi người dùng kéo
-      pauseOnMouseEnter: true, // Di chuột vào thì dừng
-    },
-
-    // 4. Cho phép kéo thả chuột (QUAN TRỌNG)
-    grabCursor: true, // Hiện hình bàn tay khi di chuột vào
-
-    // 5. Nút điều hướng
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
-
-    // 6. Dấu chấm phân trang
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true,
-      dynamicBullets: true, // Hiệu ứng chấm to nhỏ
-    },
-
-    // 7. Tối ưu hiệu năng
-    lazy: true,
-  });
+  if (document.getElementById("mainBanner") && typeof Swiper !== "undefined") {
+    new Swiper("#mainBanner", {
+      effect: "slide",
+      speed: 800,
+      loop: true,
+      autoplay: { delay: 3000, disableOnInteraction: false },
+      grabCursor: true,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      pagination: { el: ".swiper-pagination", clickable: true },
+      lazy: true,
+    });
+  }
 });
 
-// Hiện thông báo chào mừng lần đầu truy cập
+// Thông báo chào mừng
 function showWelcomeAlert() {
   if (!localStorage.getItem("klcamera_welcome")) {
     setTimeout(function () {
-      alert("Chào mừng bạn đến với KL Camera!");
-    }, 300);
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          title: "Chào mừng!",
+          text: "Chào mừng bạn đến với KL Camera Shop!",
+          imageUrl: "./img/Logo.png",
+          imageWidth: 150,
+          imageHeight: 50,
+          imageAlt: "Logo",
+          confirmButtonColor: "#ff430a",
+          timer: 3000,
+        });
+      }
+    }, 1000);
     localStorage.setItem("klcamera_welcome", "1");
   }
 }
 
-//Xử lí dấu 3 gạch hamburger menu
+// Menu Mobile
 function handleHamburgerMenu() {
   const hamburger = document.getElementById("hamburger");
   const menu = document.getElementById("menu");
@@ -56,62 +69,88 @@ function handleHamburgerMenu() {
     e.stopPropagation();
     menu.classList.toggle("active");
   });
-
-  menu.addEventListener("click", (e) => {
-    e.stopPropagation();
-  });
-
-  document.addEventListener("click", () => {
-    if (menu.classList.contains("active")) {
+  document.addEventListener("click", (e) => {
+    if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
       menu.classList.remove("active");
     }
   });
 }
 
-//Tạo nút cuộn lên đầu trang
+// Scroll Top Btn
 function initScrollToTopBtn() {
   const scrollBtn = document.createElement("button");
   scrollBtn.id = "scrollToTopBtn";
-  scrollBtn.innerHTML = `
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="12" fill="#ff430a"/>
-      <path d="M12 8L12 16" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-      <path d="M8 12L12 8L16 12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  `;
-  scrollBtn.style.position = "fixed";
-  scrollBtn.style.bottom = "30px";
-  scrollBtn.style.right = "30px";
-  scrollBtn.style.display = "none";
-  scrollBtn.style.zIndex = "9999";
-  scrollBtn.style.background = "transparent";
-  scrollBtn.style.border = "none";
-  scrollBtn.style.padding = "0";
-  scrollBtn.style.cursor = "pointer";
-  scrollBtn.style.boxShadow = "0 2px 8px rgba(0,0,0,0.15)";
-  scrollBtn.style.borderRadius = "50%";
-  document.body.appendChild(scrollBtn);
+  scrollBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`;
+  scrollBtn.style.cssText =
+    "position:fixed; bottom:30px; right:30px; display:none; z-index:9999; background:#ff430a; border:none; padding:10px; border-radius:50%; cursor:pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3)";
 
-  window.addEventListener("scroll", function () {
+  document.body.appendChild(scrollBtn);
+  window.addEventListener("scroll", () => {
     scrollBtn.style.display = window.scrollY > 200 ? "block" : "none";
   });
-
-  scrollBtn.addEventListener("click", function () {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  scrollBtn.addEventListener("click", () =>
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  );
 }
 
-//Tự động focus vào ô tìm kiếm
-function focusSearchInput() {
-  const searchInput = document.querySelector(
-    '.search-bar input[type="text"], .search-bar input[type="search"], .search-bar input[type="email"]'
-  );
-  if (searchInput) {
-    searchInput.focus();
+// ===============================
+// 2. GIỎ HÀNG (CORE LOGIC)
+// ===============================
+
+// Cập nhật số trên icon
+function updateCartCount() {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+  const badge = document.getElementById("headerCartCount");
+
+  if (badge) {
+    if (totalQty > 0) {
+      badge.style.display = "flex";
+      badge.innerText = totalQty > 99 ? "99+" : totalQty;
+    } else {
+      badge.style.display = "none";
+    }
   }
 }
 
-//Danh sách sản phẩm
+// Thêm vào giỏ (Logic đa năng)
+function addToCart(productId, name, price, img, isBuyNow = false) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const existing = cart.find((item) => item.id === productId);
+  let rawPrice =
+    typeof price === "string" ? parseInt(price.replace(/[^0-9]/g, "")) : price;
+
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ id: productId, name: name, price: rawPrice, img: img, qty: 1 });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+
+  if (isBuyNow) {
+    // Chuyển trang ngay lập tức
+    window.location.href = "checkout.php";
+  } else {
+    // Hiện thông báo nhẹ nhàng (Toast)
+    if (Toast) {
+      Toast.fire({
+        icon: "success",
+        title: "Đã thêm vào giỏ hàng",
+        text: name,
+      });
+    } else {
+      alert(`Đã thêm ${name} vào giỏ hàng!`);
+    }
+  }
+}
+
+// ===============================
+// 3. CHI TIẾT SẢN PHẨM (DỮ LIỆU)
+// ===============================
+
+// Dữ liệu sản phẩm (Copy từ file cũ của bạn)
 const products = [
   {
     id: "1",
@@ -119,7 +158,7 @@ const products = [
     price: "24,810,000đ",
     oldPrice: "25,110,000đ",
     img: "./img/Camera/Canon/DSLR/Canon-5D-Mark-IV-Body-247x296.jpg",
-    desc: "Canon 5D Mark IV là dòng máy ảnh DSLR chuyên nghiệp với cảm biến full-frame...",
+    desc: "Canon 5D Mark IV là dòng máy ảnh DSLR chuyên nghiệp...",
   },
   {
     id: "2",
@@ -127,7 +166,7 @@ const products = [
     price: "10,000,000đ",
     oldPrice: "",
     img: "./img/Camera/Canon/DSLR/Canon-77D-18-55mm-STM-247x296.jpg",
-    desc: "Máy ảnh Canon 77D kèm ống kính 18-55mm, nhỏ gọn, dễ sử dụng.",
+    desc: "Máy ảnh Canon 77D kèm ống kính 18-55mm...",
   },
   {
     id: "3",
@@ -135,7 +174,7 @@ const products = [
     price: "10,200,000đ",
     oldPrice: "10,990,000đ",
     img: "./img/Camera/Canon/Microless/Canon-EOS-R1-1-247x296.jpg",
-    desc: "Canon EOS R1, máy ảnh mirrorless cao cấp, quay phim sắc nét.",
+    desc: "Canon EOS R1...",
   },
   {
     id: "4",
@@ -143,7 +182,7 @@ const products = [
     price: "7,000,000đ",
     oldPrice: "7,490,000đ",
     img: "./img/Camera/Canon/Microless/Canon-EOS-M200-8-247x296.jpg",
-    desc: "Canon M200, máy ảnh nhỏ gọn, phù hợp du lịch và chụp ảnh hàng ngày.",
+    desc: "Canon M200...",
   },
   {
     id: "5",
@@ -151,7 +190,7 @@ const products = [
     price: "25,000,000đ",
     oldPrice: "29,000,000đ",
     img: "./img/Camera/Fujifilm/FUJIFILM-X-H2-1-247x296.jpg",
-    desc: "Fujifilm XH2, cảm biến lớn, chất lượng ảnh vượt trội.",
+    desc: "Fujifilm XH2...",
   },
   {
     id: "6",
@@ -159,7 +198,7 @@ const products = [
     price: "20,000,000đ",
     oldPrice: "25,000,000đ",
     img: "./img/Camera/Nikon/Nikon-Z5-II-5-247x296.jpg",
-    desc: "Nikon Z5 II, máy ảnh mirrorless, hiệu năng ổn định, giá tốt.",
+    desc: "Nikon Z5 II...",
   },
   {
     id: "7",
@@ -167,7 +206,7 @@ const products = [
     price: "9,000,000đ",
     oldPrice: "10,000,000đ",
     img: "./img/Camera/Sony/Sony-A7C-II-9-1-247x296.jpg",
-    desc: "Sony A7C II, nhỏ gọn, quay phim 4K, lấy nét nhanh.",
+    desc: "Sony A7C II...",
   },
   {
     id: "8",
@@ -175,7 +214,7 @@ const products = [
     price: "99,000,000đ",
     oldPrice: "100,000,000đ",
     img: "./img/Camera/Sony/Sony-A9-III-247x296.jpg",
-    desc: "Sony A9III, flagship tốc độ cao, dành cho nhiếp ảnh chuyên nghiệp.",
+    desc: "Sony A9III...",
   },
   {
     id: "9",
@@ -183,7 +222,7 @@ const products = [
     price: "9,800,000đ",
     oldPrice: "10,000,000đ",
     img: "./img/Flycam/DJI-Avata-2-Flying-Kit-Phien-ban-pin-don-247x296.jpg",
-    desc: "Flycam DJI Avata2 nhỏ gọn, quay video mượt mà, dễ điều khiển.",
+    desc: "DJI Avata2...",
   },
   {
     id: "10",
@@ -191,7 +230,7 @@ const products = [
     price: "15,000,000đ",
     oldPrice: "",
     img: "./img/Flycam/dji-mini-4-pro-fly-more-combo-plus-247x296.jpg",
-    desc: "Flycam DJI Mini 4, siêu nhẹ, quay phim 4K, pin lâu.",
+    desc: "DJI Mini 4...",
   },
   {
     id: "11",
@@ -199,7 +238,7 @@ const products = [
     price: "20,000,000đ",
     oldPrice: "",
     img: "./img/Flycam/DJI-Neo-8-247x296.jpg",
-    desc: "DJI Neo 8, flycam mạnh mẽ, ổn định, phù hợp quay ngoài trời.",
+    desc: "DJI Neo 8...",
   },
   {
     id: "12",
@@ -207,7 +246,7 @@ const products = [
     price: "25,000,000đ",
     oldPrice: "",
     img: "./img/Flycam/DJI-Neo-Fly-More-Combo-3-247x296.jpg",
-    desc: "Combo flycam DJI Neo, đầy đủ phụ kiện, bay lâu hơn.",
+    desc: "DJI Neo Fly Combo...",
   },
   {
     id: "13",
@@ -215,7 +254,7 @@ const products = [
     price: "1,000,000đ",
     oldPrice: "",
     img: "./img/Flycam/dji-shoulder-bag-cho-mini-3-1-247x296.jpg",
-    desc: "Túi đựng DJI chính hãng, bảo vệ flycam an toàn.",
+    desc: "DJI Bag...",
   },
   {
     id: "14",
@@ -223,7 +262,7 @@ const products = [
     price: "20,000,000đ",
     oldPrice: "25,000,000đ",
     img: "./img/Flycam/FPV-Combo-247x296.jpg",
-    desc: "Bộ FPV Combo, trải nghiệm bay tốc độ cao, hình ảnh sắc nét.",
+    desc: "FPV Combo...",
   },
   {
     id: "15",
@@ -231,7 +270,7 @@ const products = [
     price: "15,000,000đ",
     oldPrice: "",
     img: "./img/Flycam/Insta360-Titan-Chinh-hang-247x296.jpg",
-    desc: "Tay cầm DJI, điều khiển dễ dàng, chắc chắn.",
+    desc: "Tay Cầm DJI...",
   },
   {
     id: "16",
@@ -239,31 +278,31 @@ const products = [
     price: "100,000,000đ",
     oldPrice: "",
     img: "./img/Flycam/mavic-3-cine-tokyocamera-1-247x296.jpg",
-    desc: "Flycam Mavic 3, quay phim chuyên nghiệp, pin cực lâu.",
+    desc: "Mavic 3...",
   },
   {
     id: "17",
-    name: "Insta360 X5 (Essentials Bundle)",
+    name: "Insta360 X5 (Bundle)",
     price: "16,800,000đ",
     oldPrice: "",
     img: "./img/Action-360 Camera/Insta360-X5-Essentials-Bundle-2-1-247x296.jpg",
-    desc: "Bộ camera Insta360 X5 Essentials Bundle, quay 360 độ, nhỏ gọn, tiện dụng.",
+    desc: "Insta360 X5...",
   },
   {
     id: "18",
-    name: "Sony ZV-E10 + Lens 16-55mm F3.5-5.6",
+    name: "Sony ZV-E10",
     price: "17,490,000đ",
     oldPrice: "18,990,000đ",
     img: "./img/Camera/Sony/Sony-ZV-E10-II-Lens-16-50mm-1-247x296.jpg",
-    desc: "Sony ZV-E10 kèm lens 16-55mm, quay vlog, chụp ảnh chất lượng cao.",
+    desc: "Sony ZV-E10...",
   },
   {
     id: "19",
-    name: "Sony a6700 Mirrorless Camera (Body Only)",
+    name: "Sony a6700",
     price: "34,490,000đ",
     oldPrice: "35,490,000đ",
     img: "./img/Camera/Sony/Sony-a6700-247x296.jpg",
-    desc: "Sony a6700, máy ảnh mirrorless, cảm biến APS-C, quay phim 4K.",
+    desc: "Sony a6700...",
   },
   {
     id: "20",
@@ -271,15 +310,15 @@ const products = [
     price: "10,590,000đ",
     oldPrice: "",
     img: "./img/Action-360 Camera/Insta360-X5-7-1-247x296.jpg",
-    desc: "Insta360 X5, camera hành trình 360 độ, nhỏ gọn, dễ sử dụng.",
+    desc: "Insta360 X5...",
   },
   {
     id: "21",
-    name: "DJI Mini3 Propeller",
+    name: "DJI Mini3 Prop",
     price: "200,000đ",
     oldPrice: "",
     img: "./img/accessory/DJI-Mini-3-Propellers-247x296.jpg",
-    desc: "Cánh quạt thay thế cho DJI Mini3, bền, nhẹ, dễ lắp đặt.",
+    desc: "DJI Mini3 Prop...",
   },
   {
     id: "22",
@@ -287,124 +326,195 @@ const products = [
     price: "7,000,000đ",
     oldPrice: "7,499,000đ",
     img: "./img/Gimbal/dji-rs-4-mini-5-247x296.jpg",
-    desc: "Gimbal DJI RS Mini 5, chống rung mượt mà, nhỏ gọn.",
+    desc: "DJI RSMini 5...",
   },
   {
     id: "23",
-    name: "Hub Sạc DJI Neo 1",
+    name: "Hub Sạc DJI Neo",
     price: "980,000đ",
     oldPrice: "1,250,000đ",
     img: "./img/accessory/Hub-Sac-Pin-Hai-Chieu-DJI-Neo-1-247x296.jpg",
-    desc: "Hub sạc pin hai chiều cho DJI Neo 1, sạc nhanh, an toàn.",
+    desc: "Hub Sạc...",
   },
 ];
 
-//Thêm sản phẩm vào giỏ hàng
-function addToCart(productId) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const product = products.find((p) => p.id === productId);
-  if (!product) return;
-  const existing = cart.find((item) => item.id === productId);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ id: productId, qty: 1 });
-  }
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartCount();
-  alert("Đã thêm vào giỏ hàng!");
-}
-
-// Hiển thị chi tiết sản phẩm
 function renderProductDetail() {
   if (!document.querySelector(".product-detail-img")) return;
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   const product = products.find((p) => p.id === id);
+
   if (!product) return;
 
   document.querySelector(".product-detail-img").src = product.img;
   document.querySelector(".product-detail-title").textContent = product.name;
   document.querySelector(".product-detail-price-new").textContent =
     product.price;
-  document.querySelector(".product-detail-price-old").textContent =
-    product.oldPrice || "";
-  document.querySelector(".product-detail-desc").textContent = product.desc;
-  const buyBtn = document.querySelector(".btn-primary");
-  if (buyBtn) {
-    buyBtn.onclick = function () {
-      addToCart(id);
-    };
+
+  const oldPriceEl = document.querySelector(".product-detail-price-old");
+  if (oldPriceEl) oldPriceEl.textContent = product.oldPrice || "";
+
+  if (document.querySelector(".product-detail-desc"))
+    document.querySelector(".product-detail-desc").textContent = product.desc;
+
+  // Gán sự kiện
+  const btnAdd = document.getElementById("btnAddToCart");
+  if (btnAdd) {
+    btnAdd.onclick = () =>
+      addToCart(product.id, product.name, product.price, product.img, false);
+  }
+
+  const btnBuy = document.getElementById("btnBuyNow");
+  if (btnBuy) {
+    btnBuy.onclick = () =>
+      addToCart(product.id, product.name, product.price, product.img, true);
   }
 }
+
 // ===============================
-// API CONFIG
+// 4. XỬ LÝ ĐĂNG NHẬP & USER UI
 // ===============================
-const API_URL = "http://127.0.0.1:8000/api";
-// Đổi nếu backend host khác
-// ===============================
-// XỬ LÝ ĐĂNG NHẬP (VERIFIED WITH DB)
-// ===============================
+
+// Kiểm tra trạng thái đăng nhập để đổi giao diện Header
+function checkLoginState() {
+  const token = localStorage.getItem("token");
+  const userStr = localStorage.getItem("user_info");
+  const guestAction = document.getElementById("guestAction");
+  const userAction = document.getElementById("userAction");
+
+  if (token && userStr) {
+    const user = JSON.parse(userStr);
+    if (guestAction) guestAction.style.display = "none";
+    if (userAction) {
+      userAction.style.display = "block";
+      const nameEl = document.getElementById("userName");
+      if (nameEl) nameEl.textContent = user.name;
+
+      const emailEl = document.getElementById("userEmail");
+      if (emailEl) emailEl.textContent = user.email;
+
+      const avatarEl = document.getElementById("userAvatar");
+      if (avatarEl) {
+        avatarEl.src = user.avatar
+          ? user.avatar
+          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              user.name
+            )}&background=random`;
+      }
+    }
+  } else {
+    if (guestAction) guestAction.style.display = "block";
+    if (userAction) userAction.style.display = "none";
+  }
+}
+
+// Hàm Đăng Xuất
+async function handleLogout() {
+  // Hỏi trước khi thoát
+  const result = await Swal.fire({
+    title: "Đăng xuất?",
+    text: "Bạn có chắc muốn đăng xuất?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Đăng xuất",
+    cancelButtonText: "Hủy",
+  });
+
+  if (result.isConfirmed) {
+    const token = localStorage.getItem("token");
+    try {
+      await fetch(`${API_URL}/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_info");
+
+    Swal.fire({
+      icon: "success",
+      title: "Đã đăng xuất",
+      timer: 1000,
+      showConfirmButton: false,
+    }).then(() => {
+      window.location.href = "index.php";
+    });
+  }
+}
+
+// Xử lý Login Form
 function initLogin() {
   const form = document.getElementById("loginForm");
   if (!form) return;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
     try {
-      // 1. Gọi API đăng nhập
+      Swal.fire({ title: "Đang xử lý...", didOpen: () => Swal.showLoading() });
+
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Sai email hoặc mật khẩu!");
+        Swal.fire({
+          icon: "error",
+          title: "Thất bại",
+          text: data.message || "Sai email/mật khẩu",
+        });
         return;
       }
 
-      // 2. Lưu Token & Info vào LocalStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user_info", JSON.stringify(data.user));
 
-      alert("Đăng nhập thành công!");
-
-      // 3. --- KIỂM TRA QUYỀN (Theo Database camera_db) ---
-      // Database của bạn cột role có 2 giá trị: 'customer' và 'admin'
-
-      if (data.user && data.user.role === "admin") {
-        console.log("Quyền Admin xác nhận -> Vào trang Admin");
-        window.location.href = "admin.php"; // Chuyển sang trang quản trị
-      } else {
-        console.log("Khách hàng -> Về trang chủ");
-        window.location.href = "index.php"; // Chuyển về trang bán hàng
-      }
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Đăng nhập thành công!",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        if (data.user && data.user.role === "admin") {
+          window.location.href = "admin.php";
+        } else {
+          window.location.href = "index.php";
+        }
+      });
     } catch (error) {
-      console.error("FETCH ERROR:", error);
-      alert("Lỗi kết nối tới Server!");
+      console.error(error);
+      Swal.fire({ icon: "error", title: "Lỗi", text: "Lỗi kết nối Server!" });
     }
   });
 }
 
-//Hàm load các func vừa tạo ở trên
+// ===============================
+// 5. KHỞI TẠO (INIT)
+// ===============================
 document.addEventListener("DOMContentLoaded", function () {
+  updateCartCount();
+  checkLoginState(); // Check login ngay khi load
   renderProductDetail();
   showWelcomeAlert();
   handleHamburgerMenu();
   initScrollToTopBtn();
-  focusSearchInput();
   initLogin();
 });

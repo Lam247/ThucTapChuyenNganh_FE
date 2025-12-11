@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./js/main.js" defer></script>
     <title>KL Camera Shop</title>
   </head>
@@ -83,7 +84,14 @@
             <a href="#">Quên mật khẩu?</a>
           </div>
           <button type="submit" class="custom-btn">Đăng nhập</button>
-          <div class="register">Chưa có tài khoản? <a href="#">Đăng kí</a></div>
+          <div class="text-center mt-3 mb-2">
+              <span class="text-muted small">Hoặc đăng nhập nhanh bằng</span>
+          </div>
+
+          <button type="button" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center" onclick="loginWithGoogle()">
+              <img src="https://img.icons8.com/color/24/000000/google-logo.png" style="margin-right: 10px;"> 
+              Google
+          </button>
         </form>
       </section>
     </div>
@@ -115,6 +123,11 @@
           - Thứ 3 ca 4
         </p>
       </div>
+      <script>
+          function loginWithGoogle() {
+              window.location.href = "http://127.0.0.1:8000/api/auth/google/redirect"; 
+          }
+      </script>
     </footer>
   </body>
 </html>

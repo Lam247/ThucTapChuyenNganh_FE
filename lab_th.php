@@ -29,8 +29,11 @@
                 <img src="./img/icon/user.png" alt="Đăng nhập" />
               </a>
             </div>
-            <div class="item">
-              <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+            <div class="item cart-icon-wrap">
+              <a href="cart.php" class="text-decoration-none">
+                <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+                <span id="headerCartCount" class="cart-badge" style="display: none;">0</span>
+              </a>
             </div>
           </div>
         </div>

@@ -11,7 +11,6 @@ function getToken() {
 async function fetchAPI(url, options = {}) {
   const token = getToken();
   if (!token) {
-    // Chưa đăng nhập thì về trang chủ hoặc trang login
     window.location.href = "index.php";
     return;
   }
@@ -123,11 +122,14 @@ function loadSection(section, el) {
   }
 }
 
-// --- MODULES ---
+// ============================================================
+// 1. DASHBOARD MODULE
+// ============================================================
+let revenueChartInstance = null;
 
 async function loadDashboard() {
   document.getElementById("dynamicContent").innerHTML = `
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-md-3">
                 <div class="card card-custom p-3 bg-primary text-white">
                     <h3>Sản phẩm</h3>
@@ -140,31 +142,159 @@ async function loadDashboard() {
                     <p>Theo dõi vận chuyển</p>
                 </div>
             </div>
-                <div class="col-md-3">
+             <div class="col-md-3">
                 <div class="card card-custom p-3 bg-warning text-dark">
                     <h3>Tồn kho thấp</h3>
-                    <p>Cần nhập hàng ngay</p>
+                    <p id="lowStockText">Đang kiểm tra...</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-custom p-3 bg-info text-white">
+                    <h3>Tổng Doanh Thu</h3>
+                    <h4 id="totalRevenueDisplay" class="fw-bold">0 đ</h4>
                 </div>
             </div>
         </div>
-        <div class="card card-custom p-4 mt-3">
-            <h4>Chào mừng trở lại trang quản trị!</h4>
-            <p>Chọn một mục từ thanh bên trái để bắt đầu làm việc.</p>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-custom p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold text-secondary">Biểu đồ doanh thu</h5>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" onchange="renderRevenueChart(this.value)" style="width: 150px;">
+                                <option value="week">7 ngày qua</option>
+                                <option value="month" selected>30 ngày qua</option>
+                                <option value="quarter">3 tháng qua (1 Quý)</option>
+                                <option value="year">1 năm qua</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-primary" onclick="renderRevenueChart(document.querySelector('.form-select').value)">
+                                <i class="fa-solid fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="height: 400px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
+
   checkLowStock();
+  renderRevenueChart("month");
+}
+
+async function renderRevenueChart(range = "month") {
+  const ctx = document.getElementById("revenueChart");
+  if (!ctx) return;
+
+  const res = await fetchAPI(`${API_ADMIN}/stats/revenue?range=${range}`);
+
+  if (res) {
+    document.getElementById("totalRevenueDisplay").textContent = formatCurrency(
+      res.total_revenue
+    );
+
+    if (revenueChartInstance) {
+      revenueChartInstance.destroy();
+    }
+
+    revenueChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: res.labels,
+        datasets: [
+          {
+            label: `Doanh thu (${
+              range === "year" ? "1 năm" : range === "week" ? "7 ngày" : "Tháng"
+            })`,
+            data: res.data,
+            backgroundColor: "rgba(79, 70, 229, 0.75)",
+            borderColor: "#4f46e5",
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.6,
+            categoryPercentage: 0.7,
+            maxBarThickness: 50,
+            minBarLength: 5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: "top", align: "end" },
+          tooltip: {
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || "";
+                if (label) label += ": ";
+                if (context.parsed.y !== null) {
+                  label += new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(context.parsed.y);
+                }
+                return label;
+              },
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            border: { display: false },
+            grid: { color: "#e2e8f0", tickLength: 0 },
+            ticks: {
+              padding: 10,
+              callback: function (value) {
+                if (value >= 1000000000) return value / 1000000000 + " tỷ";
+                if (value >= 1000000) return value / 1000000 + " tr";
+                return value / 1000 + " k";
+              },
+            },
+          },
+          x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { padding: 10 },
+          },
+        },
+      },
+    });
+  }
 }
 
 async function checkLowStock() {
   const data = await fetchAPI(`${API_ADMIN}/lowstock/unread`);
+
   if (data && data.success) {
     const count = data.data.count;
+
+    // 1. Cập nhật Huy hiệu trên quả chuông (Header)
     const badge = document.getElementById("notifCount");
-    if (count > 0) {
-      badge.style.display = "inline-block";
-      badge.textContent = count;
-    } else {
-      badge.style.display = "none";
+    if (badge) {
+      if (count > 0) {
+        badge.style.display = "inline-block";
+        badge.textContent = count;
+      } else {
+        badge.style.display = "none";
+      }
+    }
+
+    // 2. Cập nhật nội dung thẻ Card Dashboard (QUAN TRỌNG)
+    const cardText = document.getElementById("lowStockText");
+    if (cardText) {
+      if (count > 0) {
+        // Nếu có hàng sắp hết -> Chữ đỏ
+        cardText.innerHTML = `<span class="text-danger fw-bold fs-4">${count}</span> sản phẩm sắp hết hàng`;
+      } else {
+        // Nếu kho ổn -> Chữ xanh
+        cardText.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-check-circle"></i> Kho ổn định</span>`;
+      }
     }
   }
 }
@@ -177,11 +307,10 @@ async function showNotifications() {
   if (data && data.data.data.length > 0) {
     data.data.data.forEach((notif) => {
       listEl.innerHTML += `
-                <div class="alert alert-warning d-flex justify-content-between align-items-center">
-                    <span>${notif.message}</span>
-                    <button class="btn btn-sm btn-outline-dark" onclick="markRead(${notif.id})">Đã xem</button>
-                </div>
-            `;
+        <div class="alert alert-warning d-flex justify-content-between align-items-center">
+            <span>${notif.message}</span>
+            <button class="btn btn-sm btn-outline-dark" onclick="markRead(${notif.id})">Đã xem</button>
+        </div>`;
     });
   } else {
     listEl.innerHTML = '<p class="text-center">Không có thông báo mới.</p>';
@@ -195,18 +324,29 @@ async function markRead(id) {
   checkLowStock();
 }
 
-// Sản phẩm
-async function loadProducts() {
-  const res = await fetchAPI(`${API_ADMIN}/products?per_page=100`);
-  if (!res) return;
+let searchTimeout = null;
 
-  let html = `
+function handleSearchProduct(input) {
+  const keyword = input.value;
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    loadProducts(keyword);
+  }, 500);
+}
+
+async function loadProducts(keyword = "") {
+  // Kiểm tra xem bảng đã được vẽ chưa
+  const tableBody = document.getElementById("productTableBody");
+
+  if (!tableBody) {
+    // Vẽ khung bảng nếu chưa có
+    document.getElementById("dynamicContent").innerHTML = `
         <div class="card card-custom p-4">
             <div class="d-flex justify-content-between mb-3">
-                <input type="text" class="form-control w-25" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" class="form-control w-25" placeholder="Tìm kiếm sản phẩm..." onkeyup="handleSearchProduct(this)">
                 <button class="btn btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> Thêm mới</button>
             </div>
-            <table class="table table-custom table-hover">
+            <table class="table table-custom table-hover align-middle">
                 <thead>
                     <tr>
                         <th>Ảnh</th>
@@ -218,54 +358,92 @@ async function loadProducts() {
                         <th>Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
-    `;
+                <tbody id="productTableBody">
+                    <tr><td colspan="7" class="text-center">Đang tải dữ liệu...</td></tr>
+                </tbody>
+            </table>
+        </div>`;
+  }
 
-  res.data.data.forEach((p) => {
-    const mainImg =
-      p.images && p.images.find((img) => img.is_primary)
-        ? p.images.find((img) => img.is_primary).image_url
-        : "https://placehold.co/50";
+  // Gọi API lấy dữ liệu
+  let url = `${API_ADMIN}/products?per_page=100`;
+  if (keyword) {
+    url += `&search=${encodeURIComponent(keyword)}`;
+  }
 
-    html += `
+  const res = await fetchAPI(url);
+  if (!res) return;
+
+  const newBody = document.getElementById("productTableBody");
+  let html = "";
+
+  if (res.data.data.length === 0) {
+    html = `<tr><td colspan="7" class="text-center text-muted py-4">Không tìm thấy sản phẩm nào.</td></tr>`;
+  } else {
+    res.data.data.forEach((p) => {
+      const mainImg =
+        p.images && p.images.find((img) => img.is_primary)
+          ? p.images.find((img) => img.is_primary).image_url
+          : "https://placehold.co/50";
+
+      html += `
             <tr>
                 <td><img src="${mainImg}" alt="img"></td>
                 <td>${p.name}</td>
-                <td>${p.sku}</td>
+                <td><span class="badge bg-light text-dark border">${
+                  p.sku
+                }</span></td>
                 <td>${formatCurrency(p.price)}</td>
                 <td>${p.stock_quantity}</td>
                 <td>${getStatusBadge(p.status)}</td>
                 <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openProductModal(${
+                      p.id
+                    })"><i class="fa-solid fa-pen"></i></button>
                     <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('products', ${
                       p.id
                     })"><i class="fa-solid fa-trash"></i></button>
                 </td>
-            </tr>
-        `;
-  });
-
-  html += `</tbody></table></div>`;
-  document.getElementById("dynamicContent").innerHTML = html;
+            </tr>`;
+    });
+  }
+  newBody.innerHTML = html;
 }
 
-// Modal Sản phẩm
-async function openProductModal() {
+async function openProductModal(productId = null) {
   document.getElementById("productForm").reset();
   document.getElementById("prodId").value = "";
+  document.querySelector("#productModal .modal-title").textContent = productId
+    ? "Cập nhật sản phẩm"
+    : "Thêm sản phẩm mới";
 
   // Load options
   const cats = await fetchAPI(`${API_BASE}/categories`);
   const brands = await fetchAPI(`${API_BASE}/brands`);
 
-  const catSelect = document.getElementById("prodCategory");
-  const brandSelect = document.getElementById("prodBrand");
-
-  catSelect.innerHTML = cats
+  document.getElementById("prodCategory").innerHTML = cats
     .map((c) => `<option value="${c.id}">${c.name}</option>`)
     .join("");
-  brandSelect.innerHTML = brands
+  document.getElementById("prodBrand").innerHTML = brands
     .map((b) => `<option value="${b.id}">${b.name}</option>`)
     .join("");
+
+  // Nếu là sửa thì điền dữ liệu cũ
+  if (productId) {
+    const res = await fetchAPI(`${API_ADMIN}/products?search=${productId}`);
+    // Cách này hơi thủ công, nếu bạn có API get detail /products/{id} thì dùng nó sẽ chuẩn hơn
+    const product = res.data.data.find((p) => p.id == productId);
+    if (product) {
+      document.getElementById("prodId").value = product.id;
+      document.getElementById("prodName").value = product.name;
+      document.getElementById("prodSku").value = product.sku;
+      document.getElementById("prodPrice").value = product.price;
+      document.getElementById("prodStock").value = product.stock_quantity;
+      document.getElementById("prodStatus").value = product.status;
+      document.getElementById("prodCategory").value = product.category_id;
+      document.getElementById("prodBrand").value = product.brand_id;
+    }
+  }
 
   new bootstrap.Modal(document.getElementById("productModal")).show();
 }
@@ -294,10 +472,7 @@ async function saveProduct() {
     formData.append("_method", "PUT");
   }
 
-  const res = await fetchAPI(url, {
-    method: "POST",
-    body: formData,
-  });
+  const res = await fetchAPI(url, { method: "POST", body: formData });
 
   if (res) {
     Swal.fire("Thành công", "Đã lưu sản phẩm!", "success");
@@ -306,14 +481,208 @@ async function saveProduct() {
   }
 }
 
-// Đơn hàng
+// ============================================================
+// 3. DANH MỤC (Có Thêm/Sửa/Xóa)
+// ============================================================
+async function loadCategories() {
+  const res = await fetchAPI(`${API_BASE}/categories`);
+  if (!res) return;
+
+  let html = `
+        <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Quản lý Danh mục</h4>
+                <button class="btn btn-primary btn-sm" onclick="openCategoryModal()">
+                    <i class="fa-solid fa-plus"></i> Thêm mới
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên danh mục</th>
+                            <th>Slug</th>
+                            <th class="text-end">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+
+  res.forEach((c) => {
+    html += `
+            <tr>
+                <td>${c.id}</td>
+                <td class="fw-bold">${c.name}</td>
+                <td><span class="badge bg-light text-dark border">${c.slug}</span></td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openCategoryModal(${c.id}, '${c.name}')">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('categories', ${c.id})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+  });
+
+  html += `</tbody></table></div></div>`;
+  document.getElementById("dynamicContent").innerHTML = html;
+}
+
+function openCategoryModal(id = null, name = "") {
+  const form = document.getElementById("categoryForm");
+  if (form) form.reset();
+
+  document.getElementById("catId").value = id || "";
+  document.getElementById("catName").value = name;
+
+  const modalTitle = document.querySelector("#categoryModal .modal-title");
+  if (modalTitle)
+    modalTitle.textContent = id ? "Cập nhật Danh mục" : "Thêm Danh mục mới";
+
+  new bootstrap.Modal(document.getElementById("categoryModal")).show();
+}
+
+async function saveCategory() {
+  const id = document.getElementById("catId").value;
+  const name = document.getElementById("catName").value;
+
+  if (!name) {
+    Swal.fire("Lỗi", "Vui lòng nhập tên danh mục!", "warning");
+    return;
+  }
+
+  const payload = { name: name };
+  let url = `${API_ADMIN}/categories`;
+  let method = "POST";
+
+  if (id) {
+    url = `${API_ADMIN}/categories/${id}`;
+    method = "PUT";
+  }
+
+  const res = await fetchAPI(url, {
+    method: method,
+    body: JSON.stringify(payload),
+  });
+
+  if (res) {
+    Swal.fire("Thành công", "Đã lưu danh mục!", "success");
+    bootstrap.Modal.getInstance(
+      document.getElementById("categoryModal")
+    ).hide();
+    loadCategories();
+  }
+}
+
+// ============================================================
+// 4. THƯƠNG HIỆU (Có Thêm/Sửa/Xóa)
+// ============================================================
+async function loadBrands() {
+  const res = await fetchAPI(`${API_BASE}/brands`);
+  if (!res) return;
+
+  let html = `
+        <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Quản lý Thương hiệu</h4>
+                <button class="btn btn-primary btn-sm" onclick="openBrandModal()">
+                    <i class="fa-solid fa-plus"></i> Thêm mới
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên thương hiệu</th>
+                            <th>Slug</th>
+                            <th class="text-end">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+
+  res.forEach((b) => {
+    html += `
+            <tr>
+                <td>${b.id}</td>
+                <td class="fw-bold">${b.name}</td>
+                <td><span class="badge bg-light text-dark border">${b.slug}</span></td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openBrandModal(${b.id}, '${b.name}')">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('brands', ${b.id})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+  });
+
+  html += `</tbody></table></div></div>`;
+  document.getElementById("dynamicContent").innerHTML = html;
+}
+
+function openBrandModal(id = null, name = "") {
+  const form = document.getElementById("brandForm");
+  if (form) form.reset();
+
+  document.getElementById("brandId").value = id || "";
+  document.getElementById("brandName").value = name;
+
+  const modalTitle = document.querySelector("#brandModal .modal-title");
+  if (modalTitle)
+    modalTitle.textContent = id
+      ? "Cập nhật Thương hiệu"
+      : "Thêm Thương hiệu mới";
+
+  new bootstrap.Modal(document.getElementById("brandModal")).show();
+}
+
+async function saveBrand() {
+  const id = document.getElementById("brandId").value;
+  const name = document.getElementById("brandName").value;
+
+  if (!name) {
+    Swal.fire("Lỗi", "Vui lòng nhập tên thương hiệu!", "warning");
+    return;
+  }
+
+  const payload = { name: name };
+  let url = `${API_ADMIN}/brands`;
+  let method = "POST";
+
+  if (id) {
+    url = `${API_ADMIN}/brands/${id}`;
+    method = "PUT";
+  }
+
+  const res = await fetchAPI(url, {
+    method: method,
+    body: JSON.stringify(payload),
+  });
+
+  if (res) {
+    Swal.fire("Thành công", "Đã lưu thương hiệu!", "success");
+    bootstrap.Modal.getInstance(document.getElementById("brandModal")).hide();
+    loadBrands();
+  }
+}
+
+// ============================================================
+// 5. ĐƠN HÀNG MODULE
+// ============================================================
 async function loadOrders() {
   const res = await fetchAPI(`${API_ADMIN}/order`);
   if (!res) return;
 
   let html = `
         <div class="card card-custom p-4">
-            <table class="table table-custom table-hover">
+            <table class="table table-custom table-hover align-middle">
                 <thead>
                     <tr>
                         <th>Mã Đơn</th>
@@ -333,7 +702,9 @@ async function loadOrders() {
                 <td>#${o.id}</td>
                 <td>${o.user ? o.user.name : "Khách vãng lai"}</td>
                 <td>${new Date(o.created_at).toLocaleDateString("vi-VN")}</td>
-                <td>${formatCurrency(o.total || 0)}</td>
+                <td class="fw-bold text-danger">${formatCurrency(
+                  o.total || 0
+                )}</td>
                 <td>${getStatusBadge(o.status)}</td>
                 <td>
                     <button class="btn btn-sm btn-outline-info" onclick="viewOrder(${
@@ -398,33 +769,9 @@ async function updateOrderStatus(id) {
   }
 }
 
-// Các mục khác
-async function loadCategories() {
-  const res = await fetchAPI(`${API_BASE}/categories`);
-  let html = `<div class="card card-custom p-4"><h4>Danh mục</h4><ul class="list-group">`;
-  res.forEach((c) => {
-    html += `<li class="list-group-item d-flex justify-content-between">
-                    ${c.name} 
-                    <button class="btn btn-sm btn-danger" onclick="deleteItem('categories', ${c.id})">Xóa</button>
-                 </li>`;
-  });
-  html += `</ul></div>`;
-  document.getElementById("dynamicContent").innerHTML = html;
-}
-
-async function loadBrands() {
-  const res = await fetchAPI(`${API_BASE}/brands`);
-  let html = `<div class="card card-custom p-4"><h4>Thương hiệu</h4><ul class="list-group">`;
-  res.forEach((b) => {
-    html += `<li class="list-group-item d-flex justify-content-between">
-                    ${b.name}
-                     <button class="btn btn-sm btn-danger" onclick="deleteItem('brands', ${b.id})">Xóa</button>
-                 </li>`;
-  });
-  html += `</ul></div>`;
-  document.getElementById("dynamicContent").innerHTML = html;
-}
-
+// ============================================================
+// 6. CÁC MODULE KHÁC (Review, Blog)
+// ============================================================
 async function loadReviews() {
   const res = await fetchAPI(`${API_ADMIN}/reviews`);
   let html = `<div class="card card-custom p-4"><h4>Đánh giá sản phẩm</h4><ul class="list-group">`;
@@ -450,7 +797,7 @@ async function loadBlogs() {
   let html = `
         <div class="card card-custom p-4">
             <h4>Quản lý Tin tức</h4>
-            <table class="table table-custom">
+            <table class="table table-custom align-middle">
                 <thead><tr><th>Tiêu đề</th><th>Tác giả</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
                 <tbody>
     `;
@@ -491,153 +838,12 @@ async function deleteItem(type, id) {
 
   const res = await fetchAPI(url, { method: "DELETE" });
   if (res) {
-    alert("Đã xóa!");
+    Swal.fire("Đã xóa!", "Mục đã được xóa thành công.", "success");
     if (type === "reviews") loadReviews();
     if (type === "categories") loadCategories();
     if (type === "brands") loadBrands();
     if (type === "products") loadProducts();
     if (type === "blogs") loadBlogs();
-  }
-}
-
-let revenueChartInstance = null;
-
-async function loadDashboard() {
-  document.getElementById("dynamicContent").innerHTML = `
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card card-custom p-3 bg-primary text-white">
-                    <h3>Sản phẩm</h3>
-                    <p>Quản lý kho hàng</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-custom p-3 bg-success text-white">
-                    <h3>Đơn hàng</h3>
-                    <p>Theo dõi vận chuyển</p>
-                </div>
-            </div>
-             <div class="col-md-3">
-                <div class="card card-custom p-3 bg-warning text-dark">
-                    <h3>Tồn kho thấp</h3>
-                    <p id="lowStockText">Đang kiểm tra...</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-custom p-3 bg-info text-white">
-                    <h3>Tổng Doanh Thu</h3>
-                    <h4 id="totalRevenueDisplay" class="fw-bold">0 đ</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-custom p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold text-secondary">Biểu đồ doanh thu</h5>
-                        
-                        <div class="d-flex gap-2">
-                            <select class="form-select form-select-sm" onchange="renderRevenueChart(this.value)" style="width: 150px;">
-                                <option value="week">7 ngày qua</option>
-                                <option value="month" selected>30 ngày qua</option>
-                                <option value="quarter">3 tháng qua (1 Quý)</option>
-                                <option value="year">1 năm qua</option>
-                            </select>
-                            <button class="btn btn-sm btn-outline-primary" onclick="renderRevenueChart(document.querySelector('.form-select').value)">
-                                <i class="fa-solid fa-sync"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div style="height: 400px;">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-  checkLowStock();
-  renderRevenueChart("month"); // Mặc định load 1 tháng
-}
-
-// Hàm vẽ biểu đồ (Có tham số range)
-async function renderRevenueChart(range = "month") {
-  const ctx = document.getElementById("revenueChart");
-  if (!ctx) return;
-
-  // 1. Gọi API kèm tham số range
-  const res = await fetchAPI(`${API_ADMIN}/stats/revenue?range=${range}`);
-
-  if (res) {
-    // Cập nhật tổng tiền hiển thị
-    document.getElementById("totalRevenueDisplay").textContent = formatCurrency(
-      res.total_revenue
-    );
-
-    // 2. QUAN TRỌNG: Hủy biểu đồ cũ nếu đã tồn tại (để tránh lỗi vẽ chồng)
-    if (revenueChartInstance) {
-      revenueChartInstance.destroy();
-    }
-
-    // 3. Vẽ biểu đồ mới
-    revenueChartInstance = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: res.labels,
-        datasets: [
-          {
-            label: `Doanh thu (${
-              range === "year" ? "1 năm" : range === "week" ? "7 ngày" : "Tháng"
-            })`,
-            data: res.data,
-            borderColor: "#4f46e5",
-            backgroundColor: "rgba(79, 70, 229, 0.1)",
-            borderWidth: 2,
-            pointBackgroundColor: "#ffffff",
-            pointBorderColor: "#4f46e5",
-            pointRadius: 4,
-            fill: true,
-            tension: 0.3,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "top" },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                let label = context.dataset.label || "";
-                if (label) label += ": ";
-                if (context.parsed.y !== null) {
-                  label += new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(context.parsed.y);
-                }
-                return label;
-              },
-            },
-          },
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: function (value) {
-                // Format trục Y gọn gàng
-                if (value >= 1000000000) return value / 1000000000 + " tỷ";
-                if (value >= 1000000) return value / 1000000 + " tr";
-                return value / 1000 + " k";
-              },
-            },
-          },
-        },
-      },
-    });
   }
 }
 

@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./js/main.js" defer></script>
     <title>Chi tiết sản phẩm | KL Camera Shop</title>
     <style>
@@ -40,8 +41,11 @@
                 <img src="./img/icon/user.png" alt="Đăng nhập" />
               </a>
             </div>
-            <div class="item">
-              <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+            <div class="item cart-icon-wrap">
+              <a href="cart.php" class="text-decoration-none">
+                <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+                <span id="headerCartCount" class="cart-badge" style="display: none;">0</span>
+              </a>
             </div>
           </div>
         </div>
@@ -107,13 +111,19 @@
               hợp cho cả nhiếp ảnh gia và quay phim chuyên nghiệp.
             </p>
             <button
-              class="btn btn-primary btn-lg"
-              style="background: #ff430a; border: none"
+              id="btnBuyNow"
+              class="btn btn-primary btn-lg fw-bold shadow-sm"
+              style="background: #ff430a; border: none; padding: 12px 30px;"
             >
-              Mua ngay
+              <i class="fa-solid fa-bolt"></i> Mua ngay
             </button>
-            <button class="btn btn-outline-secondary btn-lg ms-2">
-              Thêm vào giỏ
+
+            <button 
+              id="btnAddToCart" 
+              class="btn btn-outline-dark btn-lg ms-3 fw-bold shadow-sm"
+              style="padding: 12px 30px;"
+            >
+              <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
             </button>
           </div>
         </div>
