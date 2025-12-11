@@ -24,16 +24,29 @@
         <div class="top-right">
           <div class="promo-box">🔥 ƯU ĐÃI CỰC HOT 🔥</div>
           <div id="actions">
-            <div class="item">
-              <a href="login.php">
-                <img src="./img/icon/user.png" alt="Đăng nhập" />
-              </a>
+            <div class="item" id="guestAction">
+                <a href="login.php">
+                    <img src="./img/icon/user.png" alt="Đăng nhập" />
+                </a>
             </div>
+
+            <div class="item user-dropdown" id="userAction" style="display: none;">
+                <div class="user-info">
+                    <img src="./img/icon/user.png" id="headerAvatar" class="avatar-img">
+                    <span id="headerName" class="user-name">User</span>
+                </div>
+                <div class="dropdown-menu-custom">
+                    <div class="menu-item disabled">Xin chào, <b id="headerNameBold">User</b></div>
+                    <a href="profile.php" class="menu-item">Tài khoản của tôi</a>
+                    <a href="#" onclick="handleLogout()" class="menu-item logout-btn">Đăng xuất</a>
+                </div>
+            </div>
+            
             <div class="item cart-icon-wrap">
-              <a href="cart.php" class="text-decoration-none">
-                <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
-                <span id="headerCartCount" class="cart-badge" style="display: none;">0</span>
-              </a>
+                <a href="cart.php">
+                    <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+                    <span id="headerCartCount" class="cart-badge">0</span>
+                </a>
             </div>
           </div>
         </div>

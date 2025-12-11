@@ -1055,34 +1055,153 @@ body {
 .custom-btn:hover {
   background-color: #e03a00;
 }
+
+.user-dropdown {
+  position: relative;
+  cursor: pointer;
+  padding: 5px 0;
+  display: inline-block;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ff430a;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-menu-custom {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  min-width: 220px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  z-index: 99999;
+  overflow: hidden;
+  border: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.dropdown-menu-custom::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  border-top: 1px solid #eee;
+  border-left: 1px solid #eee;
+}
+
+.user-dropdown:hover .dropdown-menu-custom {
+  display: block;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.menu-item {
+  display: block;
+  padding: 12px 15px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.2s;
+  text-align: left;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background-color: #fff0eb;
+  color: #ff430a;
+}
+
+.menu-item.disabled {
+  background-color: #f8f9fa;
+  color: #666;
+  cursor: default;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.menu-item.logout-btn {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.menu-item.logout-btn:hover {
+  background-color: #ffeaea;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .user-name {
+    display: none;
+  }
+}
+
 .product-detail-section {
   padding-top: 160px;
   margin-top: 0 !important;
 }
 
 .product-thumb {
-  display: block;           /* Để chỉnh được kích thước */
-  width: 100%;              /* Chiều rộng bằng cột chứa nó */
-  height: 250px;            /* QUAN TRỌNG: Cố định chiều cao (bạn có thể chỉnh số này) */
-  background-color: #fff;   /* Nền trắng (để lấp đầy khoảng trống nếu ảnh nhỏ) */
-  overflow: hidden;         /* Ẩn phần thừa nếu ảnh tràn ra */
-  position: relative;       /* Để căn chỉnh các thành phần con nếu cần */
-  
+  display: block; /* Để chỉnh được kích thước */
+  width: 100%; /* Chiều rộng bằng cột chứa nó */
+  height: 250px; /* QUAN TRỌNG: Cố định chiều cao (bạn có thể chỉnh số này) */
+  background-color: #fff; /* Nền trắng (để lấp đầy khoảng trống nếu ảnh nhỏ) */
+  overflow: hidden; /* Ẩn phần thừa nếu ảnh tràn ra */
+  position: relative; /* Để căn chỉnh các thành phần con nếu cần */
+
   /* Trang trí thêm (tùy chọn) */
-  border-radius: 8px;       
-  border: 1px solid #f0f0f0; 
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
 }
 
 /* 2. Thiết lập ảnh bên trong để không bị méo */
 .product-thumb img {
   width: 100%;
   height: 100%;
-  
+
   /* QUAN TRỌNG NHẤT: Giữ tỉ lệ ảnh */
-  object-fit: contain;      
+  object-fit: contain;
   /* object-fit: contain -> Hiển thị toàn bộ ảnh, có thể có khoảng trắng thừa (Khuyên dùng cho web bán hàng) */
   /* object-fit: cover   -> Lấp đầy khung, ảnh sẽ bị cắt bớt các cạnh (Dùng nếu muốn đẹp mắt nhưng mất chi tiết) */
-  
+
   transition: transform 0.3s ease; /* Hiệu ứng mượt mà */
 }
 
@@ -1128,13 +1247,19 @@ ul.product-grid-list {
 
 /* Responsive: Màn hình nhỏ (điện thoại/tablet) tự đổi cột */
 @media (max-width: 992px) {
-  ul.product-grid-list { grid-template-columns: repeat(3, 1fr) !important; }
+  ul.product-grid-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
 }
 @media (max-width: 768px) {
-  ul.product-grid-list { grid-template-columns: repeat(2, 1fr) !important; }
+  ul.product-grid-list {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 @media (max-width: 480px) {
-  ul.product-grid-list { grid-template-columns: repeat(1, 1fr) !important; }
+  ul.product-grid-list {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
 }
 
 /* 2. Ô chứa sản phẩm (Thẻ li) */
@@ -1157,7 +1282,7 @@ li.product-grid-item-wrapper {
 }
 
 .product-grid-item:hover {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   transform: translateY(-3px);
   border-color: #ff430a;
 }

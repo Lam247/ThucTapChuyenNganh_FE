@@ -23,35 +23,32 @@
         <div class="top-right">
           <div class="promo-box">🔥 ƯU ĐÃI CỰC HOT 🔥</div>
           
-          <div id="actions" class="d-flex align-items-center gap-3">
-            
+          <div id="actions">
             <div class="item" id="guestAction">
-              <a href="login.php" title="Đăng nhập">
-                <img src="./img/icon/user.png" alt="Đăng nhập" />
-              </a>
+                <a href="login.php">
+                    <img src="./img/icon/user.png" alt="Đăng nhập" />
+                </a>
             </div>
 
-            <div class="item dropdown" id="userAction" style="display: none;">
-              <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <img id="userAvatar" src="" alt="User" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #ff430a;">
-                <span id="userName" class="ms-2 fw-bold d-none d-md-block text-dark" style="font-size: 14px;">User</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
-                <li><span class="dropdown-item-text text-muted small" id="userEmail">email@example.com</span></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="admin.php" id="adminLink" style="display:none;"><i class="fa-solid fa-gauge me-2"></i>Trang quản trị</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-box me-2"></i>Đơn hàng của tôi</a></li>
-                <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất</a></li>
-              </ul>
+            <div class="item user-dropdown" id="userAction" style="display: none;">
+                <div class="user-info">
+                    <img src="./img/icon/user.png" id="headerAvatar" alt="Avatar" class="avatar-img">
+                    <span id="headerName" class="user-name">User</span>
+                </div>
+                
+                <div class="dropdown-menu-custom">
+                    <div class="menu-item disabled">Xin chào, <b id="headerNameBold">User</b></div>
+                    <a href="profile.php" class="menu-item">Tài khoản của tôi</a>
+                    <a href="#" onclick="handleLogout()" class="menu-item logout-btn">Đăng xuất</a>
+                </div>
             </div>
 
-            <div class="item cart-icon-wrap position-relative">
-              <a href="cart.php" class="text-decoration-none">
-                <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
-                <span id="headerCartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 10px; border: 2px solid #fff;">0</span>
-              </a>
+            <div class="item cart-icon-wrap">
+                <a href="cart.php">
+                    <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+                    <span id="headerCartCount" class="cart-badge">0</span>
+                </a>
             </div>
-
           </div>
         </div>
       </div>

@@ -22,31 +22,22 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Lấy tham số từ URL
+
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
             const userStr = params.get('user');
             const error = params.get('error');
-
-            // 2. Xử lý lỗi nếu có
             if (error) {
                 alert("Lỗi đăng nhập: " + decodeURIComponent(error));
                 window.location.href = "login.php";
                 return;
             }
-
-            // 3. Xử lý thành công
             if (token && userStr) {
                 try {
-                    // Giải mã thông tin user
                     const decodedUser = decodeURIComponent(userStr);
                     const user = JSON.parse(decodedUser);
-
-                    // Lưu vào LocalStorage (Giống hệt lúc đăng nhập thường)
                     localStorage.setItem('token', token);
                     localStorage.setItem('user_info', decodedUser);
-
-                    // Chuyển hướng
                     if (user.role === 'admin') {
                         window.location.href = 'admin.php';
                     } else {
