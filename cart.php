@@ -12,99 +12,52 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <script src="./js/main.js" defer></script> 
-
     <style>
-        .cart-section {
-            margin-top: 180px;
-            min-height: 60vh;
-            margin-bottom: 60px;
-        }
-        @media (max-width: 768px) {
-            .cart-section { margin-top: 130px; }
-        }
-
-        .table img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .quantity-input {
-            width: 60px;
-            text-align: center;
-            border: 1px solid #dee2e6;
-            margin: 0 5px;
-        }
-        .btn-qty {
-            border: 1px solid #dee2e6;
-            background: #fff;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
+        .cart-section { margin-top: 180px; min-height: 60vh; margin-bottom: 60px; }
+        @media (max-width: 768px) { .cart-section { margin-top: 130px; } }
+        .table img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+        .quantity-input { width: 60px; text-align: center; border: 1px solid #dee2e6; margin: 0 5px; }
+        .btn-qty { border: 1px solid #dee2e6; background: #fff; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-qty:hover { background: #f8f9fa; }
-
-        .btn-checkout {
-            background-color: #ff430a;
-            border-color: #ff430a;
-            color: white;
-            font-weight: bold;
-            padding: 12px;
-            text-transform: uppercase;
-        }
+        .btn-checkout { background-color: #ff430a; border-color: #ff430a; color: white; font-weight: bold; padding: 12px; text-transform: uppercase; }
     </style>
 </head>
 
 <body>
 <div id="wrapper">
-    
     <div id="top-bar">
         <div class="top-left">
-            <form class="search-bar" action="#" method="get">
-                <input type="text" placeholder="Tìm kiếm sản phẩm..." name="q" />
-                <button type="submit">Tìm</button>
-            </form>
+            <form class="search-bar" action="#" method="get"><input type="text" placeholder="Tìm kiếm..." name="q" /><button type="submit">Tìm</button></form>
         </div>
         <div class="top-right">
             <div class="promo-box">🔥 ƯU ĐÃI CỰC HOT 🔥</div>
             <div id="actions">
-            <div class="item" id="guestAction">
-                <a href="login.php">
-                    <img src="./img/icon/user.png" alt="Đăng nhập" />
-                </a>
-            </div>
-
-            <div class="item user-dropdown" id="userAction" style="display: none;">
-                <div class="user-info">
-                    <img src="./img/icon/user.png" id="headerAvatar" alt="Avatar" class="avatar-img">
-                    <span id="headerName" class="user-name">User</span>
+                <div class="item" id="guestAction">
+                    <a href="login.php"><img src="./img/icon/user.png" alt="Đăng nhập" /></a>
                 </div>
-                
-                <div class="dropdown-menu-custom">
-                    <div class="menu-item disabled">Xin chào, <b id="headerNameBold">User</b></div>
-                    <a href="profile.php" class="menu-item">Tài khoản của tôi</a>
-                    <a href="#" onclick="handleLogout()" class="menu-item logout-btn">Đăng xuất</a>
+                <div class="item user-dropdown" id="userAction" style="display: none;">
+                    <div class="user-info">
+                        <img src="./img/icon/user.png" id="headerAvatar" alt="Avatar" class="avatar-img">
+                        <span id="headerName" class="user-name">User</span>
+                    </div>
+                    <div class="dropdown-menu-custom">
+                        <div class="menu-item disabled">Xin chào, <b id="headerNameBold">User</b></div>
+                        <a href="profile.php" class="menu-item">Tài khoản của tôi</a>
+                        <a href="#" onclick="handleLogout()" class="menu-item logout-btn">Đăng xuất</a>
+                    </div>
                 </div>
-            </div>
-
-            <div class="item cart-icon-wrap">
-                <a href="cart.php">
-                    <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
-                    <span id="headerCartCount" class="cart-badge">0</span>
-                </a>
-            </div>
+                <div class="item cart-icon-wrap">
+                    <a href="cart.php">
+                        <img src="./img/icon/shopping-cart.png" alt="Giỏ hàng" />
+                        <span id="headerCartCount" class="cart-badge">0</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="header">
-        <a href="index.php" class="logo">
-            <img src="./img/Logo.png" alt="Logo" />
-        </a>
+        <a href="index.php" class="logo"><img src="./img/Logo.png" alt="Logo" /></a>
         <div id="hamburger">☰</div>
         <div id="menu">
             <div class="item">
@@ -121,10 +74,7 @@
     </div>
 
     <div class="container cart-section">
-        <h2 class="fw-bold mb-4" style="border-left: 5px solid #ff430a; padding-left: 15px;">
-            Giỏ Hàng Của Bạn
-        </h2>
-
+        <h2 class="fw-bold mb-4" style="border-left: 5px solid #ff430a; padding-left: 15px;">Giỏ Hàng Của Bạn</h2>
         <div class="row">
             <div class="col-lg-8 mb-4">
                 <div class="card border-0 shadow-sm">
@@ -143,99 +93,74 @@
                                 <tbody id="cartTableBody"></tbody>
                             </table>
                         </div>
-
                         <div id="emptyCartMessage" class="text-center py-5" style="display:none;">
-                            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
-                                 alt="Empty" style="width:80px; opacity:0.5;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" alt="Empty" style="width:80px; opacity:0.5;">
                             <p class="text-muted mt-3 fs-5">Giỏ hàng chưa có sản phẩm nào</p>
                             <a href="index.php" class="btn btn-outline-dark mt-2">← Quay lại mua sắm</a>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0 fw-bold">Cộng giỏ hàng</h5>
-                    </div>
-
+                    <div class="card-header bg-white py-3"><h5 class="mb-0 fw-bold">Cộng giỏ hàng</h5></div>
                     <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Tạm tính:</span>
-                            <strong id="cartSubtotal">0đ</strong>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Phí vận chuyển:</span>
-                            <span class="text-success">Tính lúc thanh toán</span>
-                        </div>
-
+                        <div class="d-flex justify-content-between mb-3"><span class="text-muted">Tạm tính:</span><strong id="cartSubtotal">0đ</strong></div>
+                        <div class="d-flex justify-content-between mb-3"><span class="text-muted">Phí vận chuyển:</span><span class="text-success">Tính lúc thanh toán</span></div>
                         <hr>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="fs-5 fw-bold">Tổng cộng:</span>
-                            <span class="fs-4 fw-bold" id="cartTotal" style="color:#ff430a;">0đ</span>
-                        </div>
-
-                        <a href="checkout.php" class="btn btn-checkout w-100 mb-2">
-                            Tiến hành thanh toán
-                        </a>
-
-                        <a href="product.php" class="btn btn-outline-secondary w-100 border-0">
-                            Tiếp tục mua sắm
-                        </a>
+                        <div class="d-flex justify-content-between mb-4"><span class="fs-5 fw-bold">Tổng cộng:</span><span class="fs-4 fw-bold" id="cartTotal" style="color:#ff430a;">0đ</span></div>
+                        <a href="checkout.php" class="btn btn-checkout w-100 mb-2">Tiến hành thanh toán</a>
+                        <a href="product.php" class="btn btn-outline-secondary w-100 border-0">Tiếp tục mua sắm</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
+<script src="./js/main.js"></script>
 
 <script>
-    // Hàm định dạng tiền tệ (Giữ nguyên)
-    const formatMoney = (amount) =>
-        new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+    // Định nghĩa hàm format riêng để chạy ngay lập tức (Không chờ main.js)
+    const safeFormatMoney = (amount) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
 
     function renderCartPage() {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let cart = [];
+        try { cart = JSON.parse(localStorage.getItem("cart")) || []; } catch(e) { cart=[]; }
+        
         const tbody = document.getElementById("cartTableBody");
         const emptyMsg = document.getElementById("emptyCartMessage");
         const subtotalEl = document.getElementById("cartSubtotal");
         const totalEl = document.getElementById("cartTotal");
 
-        // Đảm bảo các element tồn tại trước khi thao tác
-        if (!tbody || !subtotalEl) return; 
+        if (!tbody) return;
 
         tbody.innerHTML = "";
         let total = 0;
 
         if (cart.length === 0) {
-            emptyMsg.style.display = "block";
-            subtotalEl.innerText = "0đ";
-            totalEl.innerText = "0đ";
+            if(emptyMsg) emptyMsg.style.display = "block";
+            if(subtotalEl) subtotalEl.innerText = "0đ";
+            if(totalEl) totalEl.innerText = "0đ";
             return;
         } else {
-            emptyMsg.style.display = "none";
+            if(emptyMsg) emptyMsg.style.display = "none";
         }
 
         cart.forEach((item, index) => {
             const lineTotal = item.price * item.qty;
             total += lineTotal;
+            let imgUrl = item.img || './img/no-image.png';
 
             tbody.innerHTML += `
                 <tr>
                     <td class="ps-4">
                         <div class="d-flex align-items-center">
-                            <img src="${item.img}" alt="">
-                            <div class="ms-3">
-                                <h6 class="mb-1 fw-bold">${item.name}</h6>
-                            </div>
+                            <img src="${imgUrl}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" onerror="this.src='./img/no-image.png'">
+                            <div class="ms-3"><h6 class="mb-1 fw-bold">${item.name}</h6></div>
                         </div>
                     </td>
-                    <td>${formatMoney(item.price)}</td>
+                    <td>${safeFormatMoney(item.price)}</td>
                     <td>
                         <div class="d-flex align-items-center">
                             <button class="btn-qty" onclick="updateQty(${index}, -1)">-</button>
@@ -243,30 +168,27 @@
                             <button class="btn-qty" onclick="updateQty(${index}, 1)">+</button>
                         </div>
                     </td>
-                    <td class="text-end pe-4 fw-bold">${formatMoney(lineTotal)}</td>
+                    <td class="text-end pe-4 fw-bold">${safeFormatMoney(lineTotal)}</td>
                     <td>
-                        <button class="btn btn-link text-danger" onclick="removeItem(${index})">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <button class="btn btn-link text-danger" onclick="removeItem(${index})"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `;
         });
 
-        subtotalEl.innerText = formatMoney(total);
-        totalEl.innerText = formatMoney(total);
+        if(subtotalEl) subtotalEl.innerText = safeFormatMoney(total);
+        if(totalEl) totalEl.innerText = safeFormatMoney(total);
     }
 
     function updateQty(index, change) {
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
         let newQty = cart[index].qty + change;
-
         if (newQty < 1) return removeItem(index);
-
         cart[index].qty = newQty;
         localStorage.setItem("cart", JSON.stringify(cart));
-        renderCartPage();
-        // Gọi hàm update cart count global
+        renderCartPage(); 
+        
+        // Gọi hàm update Header từ main.js
         if (typeof updateCartCount === "function") updateCartCount();
     }
 
@@ -275,39 +197,19 @@
         cart.splice(index, 1);
         localStorage.setItem("cart", JSON.stringify(cart));
         renderCartPage();
-        // Gọi hàm update cart count global
+        
+        // Gọi hàm update Header từ main.js
         if (typeof updateCartCount === "function") updateCartCount();
     }
 
+    // --- CHẠY NGAY LẬP TỨC (Main.js đã load ở trên rồi) ---
+    console.log("Cart Page Init...");
+    renderCartPage();
 
-    // ==========================================================
-    // HÀM KHỞI TẠO TỔNG QUÁT (FIX LỖI HEADER)
-    // ==========================================================
-    function initCartPage() {
-        // 1. Cập nhật trạng thái Đăng nhập trên Header (Nếu hàm có trong main.js)
-        // Tôi dùng checkLoginState() vì nó phổ biến hơn updateHeaderUser()
-        if (typeof checkLoginState === 'function') {
-            checkLoginState(); 
-        }
-        
-        // 2. Cập nhật số lượng Giỏ hàng trên Header (Nếu hàm có trong main.js)
-        if (typeof updateCartCount === 'function') {
-            updateCartCount();
-        }
+    // Cập nhật Header User & Số lượng (Hàm từ main.js)
+    if (typeof checkLoginState === "function") checkLoginState();
+    if (typeof updateCartCount === "function") updateCartCount();
 
-        // 3. Render nội dung chính của trang Giỏ hàng
-        renderCartPage();
-
-        // 4. (Tùy chọn) Khởi tạo Checkout (Nếu hàm có trong main.js)
-        if (typeof initCheckout === 'function') {
-            initCheckout();
-        }
-    }
-
-    // GỌI HÀM KHỞI TẠO TỔNG QUÁT MỘT LẦN DUY NHẤT KHI TRANG LOAD
-    // => Đảm bảo mọi thứ (Header, Giỏ hàng) đều được cập nhật
-    document.addEventListener("DOMContentLoaded", initCartPage);
 </script>
-
 </body>
 </html>

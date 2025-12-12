@@ -1,7 +1,7 @@
 // =============================================================
 // 1. CẤU HÌNH & TIỆN ÍCH CHUNG
 // =============================================================
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "https://127.0.0.1:8000/api";
 const IMAGE_BASE_URL = "http://127.0.0.1:8000/";
 
 // Cấu hình Toast
@@ -531,11 +531,37 @@ document.addEventListener("DOMContentLoaded", function () {
   showWelcomeAlert();
 
   const btnTop = document.createElement("button");
-  btnTop.innerHTML = "↑";
-  btnTop.style.cssText =
-    "position:fixed; bottom:20px; right:20px; display:none; z-index:999; padding:10px; border-radius:50%; background:#ff430a; color:white; border:none;";
+  btnTop.innerHTML = "&#8679;";
+  btnTop.style.cssText = `
+        position: fixed; 
+        bottom: 30px; 
+        right: 30px; 
+        display: none; 
+        z-index: 9999; 
+        width: 50px; 
+        height: 50px; 
+        border-radius: 50%; 
+        background: #ff430a; 
+        color: white; 
+        border: none; 
+        font-size: 20px;
+        box-shadow: 0 4px 15px rgba(255, 67, 10, 0.4);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    `;
+  btnTop.onmouseenter = function () {
+    btnTop.style.transform = "translateY(-5px)";
+    btnTop.style.backgroundColor = "#d93600";
+    btnTop.style.boxShadow = "0 8px 20px rgba(255, 67, 10, 0.6)";
+  };
+  btnTop.onmouseleave = function () {
+    btnTop.style.transform = "translateY(0)";
+    btnTop.style.backgroundColor = "#ff430a";
+    btnTop.style.boxShadow = "0 4px 15px rgba(255, 67, 10, 0.4)";
+  };
   document.body.appendChild(btnTop);
   btnTop.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
-  window.onscroll = () =>
-    (btnTop.style.display = window.scrollY > 200 ? "block" : "none");
+  window.onscroll = () => {
+    btnTop.style.display = window.scrollY > 200 ? "block" : "none";
+  };
 });
